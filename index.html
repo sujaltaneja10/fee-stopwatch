@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stopwatch</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        height: 100%;
+        width: 100%;
+      }
+      body {
+        background-color: black;
+        color: white;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      button {
+        border-radius: 50%;
+        height: 60px;
+        width: 60px;
+        margin: 20px;
+      }
+      .container {
+        width: 500px;
+        height: auto;
+        padding: 50px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .child {
+        margin: 10px;
+      }
+      label {
+        width: 80%;
+        text-align: center;
+        font-size: 40px;
+        color: #f38c18;
+      }
+      .stop-btn {
+        background-color: red;
+        color: rgb(82, 22, 22);
+      }
+      .lap-item-cont {
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <label class="child">00:00:00</label>
+      <div class="btn-cont child">
+        <button class="lap-btn">Lap</button>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="lap-item-cont">
+        <div class="cont1"></div>
+        <div class="cont2"></div>
+      </div>
+    </div>
+    <script>
+      let currentBtn = true;
+      let startTime = Date.now();
+      let interval;
+      let savedTime = 0;
+      let lapNum = 0;
+      const startBtn = document.querySelector(".start-btn");
+      const lapBtn = document.querySelector(".lap-btn");
+      const label = document.querySelector("label");
+      const cont1 = document.querySelector(".cont1");
+      const cont2 = document.querySelector(".cont2");
+
+      function convertTime(time) {
+        let ms = (time % 100).toString().padStart(2, "0");
+        let sec = Math.floor((time % (1000 * 60)) / 1000)
+          .toString()
+          .padStart(2, "0");
+        let min = Math.floor(time / (1000 * 60))
+          .toString()
+          .padStart(2, "0");
+        return `${min}:${sec}:${ms}`;
+      }
+
+      startBtn.addEventListener("click", () => {
+        if (currentBtn) {
+          startTime = Date.now();
+          interval = setInterval(() => {
+            let actualTime = savedTime + (Date.now() - startTime);
+            label.innerText = convertTime(actualTime);
+          }, 100);
+          startBtn.innerText = "Stop";
+          startBtn.classList.add("stop-btn");
+          startBtn.classList.remove("start-btn");
+          currentBtn = false;
+        } else {
+          clearInterval(interval);
+          savedTime += Date.now() - startTime;
+          startTime = Date.now();
+          startBtn.innerText = "Start";
+          startBtn.classList.remove("stop-btn");
+          startBtn.classList.add("start-btn");
+          currentBtn = true;
+        }
+      });
+
+      lapBtn.addEventListener("click", () => {
+        lapNum += 1;
+        cont1.innerHTML = `<div>Lap: ${lapNum}</div>`;
+        cont2.innerHTML = `<div>${label.innerText}</div>`;
+      });
+    </script>
+  </body>
+</html>
